@@ -1,7 +1,0 @@
-beautifulsoup4==4.12.2
-requests==2.31.0
-imdbpy==2022.7.9
-transformers==4.35.0
-torch==2.0.1
-fastapi==0.100.0
-uvicorn==0.23.0
