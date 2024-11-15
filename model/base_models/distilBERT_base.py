@@ -5,7 +5,6 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from transformers import Trainer, TrainingArguments
 
-# Load the data
 data_path = '/kaggle/input/imdb-movie-scripts-imdb-details/scripts_data_filtered.csv'
 df = pd.read_csv(data_path)
 
@@ -47,11 +46,10 @@ distilbert_model = DistilBertForSequenceClassification.from_pretrained("distilbe
 train_df['scaled_rating'] = train_df['rating'].apply(scale_rating)
 val_df['scaled_rating'] = val_df['rating'].apply(scale_rating)
 
-# Prepare Datasets
+# Prepare Dataset using only script content for base model
 train_dataset_distilbert = ScriptDataset(train_df['script_content'], train_df['scaled_rating'], distilbert_tokenizer)
 val_dataset_distilbert = ScriptDataset(val_df['script_content'], val_df['scaled_rating'], distilbert_tokenizer)
 
-# Training Function
 def train_model(model, train_dataset, val_dataset):
     training_args = TrainingArguments(
         output_dir='./results',
@@ -74,7 +72,6 @@ def train_model(model, train_dataset, val_dataset):
 
     trainer.train()
 
-# Train the DistilBERT model
 print("Training DistilBERT model...")
 train_model(distilbert_model, train_dataset_distilbert, val_dataset_distilbert)
 
