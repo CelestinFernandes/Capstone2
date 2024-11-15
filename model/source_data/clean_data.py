@@ -1,5 +1,6 @@
 import pandas as pd
 
+## Preprocessing step - filtering data that had matching title in IMDb and IMSDb
 def filter_matching_movies():
     df = pd.read_csv('model/scraped_data/scripts_data_updated.csv')
     
