@@ -6,7 +6,6 @@ from transformers import AlbertTokenizer, AlbertForSequenceClassification
 from torch.utils.data import Dataset
 from transformers import Trainer, TrainingArguments
 
-## Using kaggle for model training
 data_path = '/kaggle/input/imdb-movie-scripts-imdb-details/scripts_data_filtered.csv'
 df = pd.read_csv(data_path)
 
