@@ -90,7 +90,6 @@ def predict(model, tokenizer, text, max_len=512):
     encoding = {k: v.to(device) for k, v in encoding.items()}
 
     with torch.no_grad():
-        # Make prediction
         outputs = model(**encoding)
         # Get the raw prediction and unscale it to the range [1, 10]
         scaled_predicted_rating = outputs.logits.squeeze().item()
