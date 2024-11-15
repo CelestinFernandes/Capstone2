@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from transformers import Trainer, TrainingArguments
 
+## Using kaggle for model training
 data_path = '/kaggle/input/imdb-movie-scripts-imdb-details/scripts_data_filtered.csv'
 df = pd.read_csv(data_path)
 
