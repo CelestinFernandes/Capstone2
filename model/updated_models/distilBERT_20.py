@@ -83,3 +83,35 @@ else:
 # Train the DistilBERT model
 print("Training DistilBERT model...")
 train_model(distilbert_model, train_dataset_distilbert, val_dataset_distilbert)
+
+# Define a function for inference
+def predict(model, tokenizer, text, max_len=512):
+    model.eval()  # Set model to evaluation mode
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")  # Check for GPU availability
+
+    # Move model to the same device
+    model.to(device)
+
+    # Tokenize input text
+    encoding = tokenizer(text, padding='max_length', truncation=True, max_length=max_len, return_tensors="pt")
+
+    # Move input encoding to the correct device
+    encoding = {k: v.to(device) for k, v in encoding.items()}
+
+    with torch.no_grad():
+        # Make prediction
+        outputs = model(**encoding)
+        # Get the raw prediction and unscale it to the range [1, 10]
+        scaled_predicted_rating = outputs.logits.squeeze().item()
+        predicted_rating = unscale_rating(scaled_predicted_rating)
+    return predicted_rating
+
+# Test the DistilBERT model on the validation set
+print("Testing DistilBERT model...\n")
+for idx, row in val_df.sample(5, random_state=42).iterrows():
+    movie_name = row['title'] if 'title' in row else 'Unknown Title'  # Check for the 'title' column
+    script = row['script_content']
+#     actual_rating = scaler.inverse_transform([[row['rating']]])[0][0]
+    actual_rating = row['rating']
+    predicted_rating = predict(distilbert_model, distilbert_tokenizer, script)
+    print(f"Movie: {movie_name}\nDistilBERT - Actual Rating: {actual_rating:.1f}, Predicted Rating: {predicted_rating:.1f}\n")
