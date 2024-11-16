@@ -84,3 +84,32 @@ def train_model(model, train_dataset, val_dataset):
 # Train the ALBERT model
 print("Training ALBERT model...")
 train_model(albert_model, train_dataset_albert, val_dataset_albert)
+
+
+# Function for unscaled rating conversion
+def unscale_rating(scaled_rating):
+    return scaler.inverse_transform([[scaled_rating]])[0][0]
+
+# Define a function for inference
+def predict(model, tokenizer, text, max_len=512):
+    model.eval()
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+
+    encoding = tokenizer(text, padding='max_length', truncation=True, max_length=max_len, return_tensors="pt")
+    encoding = {k: v.to(device) for k, v in encoding.items()}
+
+    with torch.no_grad():
+        outputs = model(**encoding)
+        scaled_predicted_rating = outputs.logits.squeeze().item()
+        predicted_rating = unscale_rating(scaled_predicted_rating)
+    return predicted_rating
+
+# Test the ALBERT model on the validation set
+print("Testing ALBERT model...\n")
+for idx, row in val_df.sample(5, random_state=42).iterrows():
+    movie_name = row['title']
+    combined_features = row['combined_features']
+    actual_rating = scaler.inverse_transform([[row['rating']]])[0][0]
+    predicted_rating = predict(albert_model, albert_tokenizer, combined_features)
+    print(f"Movie: {movie_name}\nALBERT - Actual Rating: {actual_rating:.1f}, Predicted Rating: {predicted_rating:.1f}\n")
