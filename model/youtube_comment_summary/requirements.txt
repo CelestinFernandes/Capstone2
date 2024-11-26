@@ -4,3 +4,4 @@ requests
 google-api-python-client
 pydantic
 groq
+python-dotenv

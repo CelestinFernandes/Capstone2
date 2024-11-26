@@ -1,4 +1,3 @@
-import os
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from googleapiclient.discovery import build
@@ -7,15 +6,20 @@ from typing import List, Dict
 import requests
 import re
 import time
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# Get API keys from environment variables
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY")
+
 
 app = FastAPI()
-youtube = build("youtube", "v3", developerKey="AIzaSyDgZQPYB6wdzN2IbM_U6Eomr5nbVwfnMao")
-
-# Groq API client setup
-groq_client = Groq(api_key="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")
-
-# Hugging Face API setup
-HUGGINGFACE_API_KEY = "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"
+youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
+groq_client = Groq(api_key=GROQ_API_KEY)
 HUGGINGFACE_API_URL = "https://api-inference.huggingface.co/models"
 
 HEADERS = {
