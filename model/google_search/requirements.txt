@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pytrends
+selenium
+serpapi
+python-dotenv
+google-search-results
+groq
