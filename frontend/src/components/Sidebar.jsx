@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
-import {
-  HomeIcon,
-  FilmIcon,
-  DocumentTextIcon,
-  VideoCameraIcon,
-  TvIcon,
-  CogIcon,
-  Bars3Icon,
-} from '@heroicons/react/24/solid';
+import { HomeIcon, FilmIcon, DocumentTextIcon, VideoCameraIcon, TvIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/solid';
+import { Link } from 'react-router-dom'; // Import Link
 import '../styles/Sidebar.css'; // Import the CSS file
 
 const Sidebar = () => {
@@ -18,26 +11,23 @@ const Sidebar = () => {
   const [isCogRotated, setIsCogRotated] = useState(false); // New state to track rotation
 
   const menuItems = [
-    { name: 'Home', icon: HomeIcon },
-    { name: 'News', icon: DocumentTextIcon },
-    { name: 'Movies', icon: FilmIcon },
-    { name: 'Favorites', icon: VideoCameraIcon },
-    { name: 'Chat', icon: TvIcon },
+    { name: 'Home', icon: HomeIcon, path: '/' },
+    { name: 'News', icon: DocumentTextIcon, path: '/news' }, // Set path for News
+    { name: 'Movies', icon: FilmIcon, path: '/movies' },
+    { name: 'Favorites', icon: VideoCameraIcon, path: '/favorites' },
+    { name: 'Chat', icon: TvIcon, path: '/chat' },
   ];
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleDarkMode = () => setDarkMode(!darkMode);
   const toggleModal = () => setIsModalOpen(!isModalOpen);
-
   const toggleCogRotation = () => setIsCogRotated(!isCogRotated); // Toggle cog rotation
 
   const handleItemClick = (index) => {
     setSelectedItem(index); // Set the clicked item as selected
-    
-    // Set the selection with a delay of 450ms
     setTimeout(() => {
       setSelectedItem(index);
-    }, ); // 450ms delay for selection effect
+    }, 450); // 450ms delay for selection effect
   };
 
   return (
@@ -49,20 +39,17 @@ const Sidebar = () => {
         <Bars3Icon className="h-8 w-8" />
       </button>
 
-      <aside
-        className={`sidebar ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}
-      >
+      <aside className={`sidebar ${isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}`}>
         <nav className="sidebar-nav">
           {menuItems.map((item, index) => (
             <li
               key={index}
               onClick={() => handleItemClick(index)} // Add click handler
               className={selectedItem === index ? 'selected' : ''} // Conditional selected class
-              style={{}}
             >
               <item.icon className="icon" />
               <div className={`text ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-                {item.name}
+                <Link to={item.path}>{item.name}</Link> {/* Use Link for navigation */}
               </div>
             </li>
           ))}
@@ -96,9 +83,7 @@ const Sidebar = () => {
                 onChange={toggleDarkMode}
               />
               <div className="toggle">
-                <div
-                  className={`dot ${darkMode ? 'active' : ''}`}
-                ></div>
+                <div className={`dot ${darkMode ? 'active' : ''}`}></div>
               </div>
             </label>
           </div>

@@ -27,15 +27,17 @@
 
 
 import React, { useState, useEffect } from 'react';
-import Sidebar from './components/Sidebar';
-import MovieGrid from './components/MovieGrid';
+import { Routes, Route } from 'react-router-dom'; // Import Routes and Route, no need for Router
+import Sidebar from './components/Sidebar'; // Import Sidebar
+import MovieGrid from './components/MovieGrid'; // Import MovieGrid
+import News from './pages/News'; // Import the News page component
 
 const App = () => {
   // Check if dark mode setting exists in localStorage
   const savedDarkMode = localStorage.getItem('darkMode') === 'true';
 
   // Initialize dark mode state based on saved preference or default to true
-  const [darkMode, setDarkMode] = useState(savedDarkMode); 
+  const [darkMode, setDarkMode] = useState(savedDarkMode);
 
   const [sidebarExpanded, setSidebarExpanded] = useState(true); // Track sidebar state (expanded/collapsed)
 
@@ -59,7 +61,7 @@ const App = () => {
     <div className={`flex h-screen ${darkMode ? 'bg-[#121212]' : 'bg-[#f5f5f5]'} transition-colors duration-300`}>
       {/* Sidebar */}
       <Sidebar sidebarExpanded={sidebarExpanded} setSidebarExpanded={setSidebarExpanded} />
-      
+
       {/* Main content area */}
       <div
         className={`flex-1 flex flex-col overflow-y-auto transition-all duration-300 ease-in-out ${
@@ -67,10 +69,20 @@ const App = () => {
         }`}
       >
         <div className="flex flex-col p-6">
-          <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mb-4">Top Rated</h2>
-          <MovieGrid category="top-rated" />
-          <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mt-8 mb-4">Best of Action</h2>
-          <MovieGrid category="action" />
+          <Routes>
+            {/* Default home page route */}
+            <Route path="/" element={
+              <div>
+                <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mb-4">Top Rated</h2>
+                <MovieGrid category="top-rated" />
+                <h2 className="text-3xl font-semibold text-white dark:text-gray-100 mt-8 mb-4">Best of Action</h2>
+                <MovieGrid category="action" />
+              </div>
+            } />
+
+            {/* News page route */}
+            <Route path="/news" element={<News />} />
+          </Routes>
         </div>
       </div>
     </div>
