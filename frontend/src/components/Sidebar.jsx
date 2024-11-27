@@ -1,22 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HomeIcon, FilmIcon, DocumentTextIcon, VideoCameraIcon, TvIcon, CogIcon, Bars3Icon } from '@heroicons/react/24/solid';
-import { Link } from 'react-router-dom'; // Import Link
+import { Link, useNavigate } from 'react-router-dom'; // Import Link and useNavigate
 import '../styles/Sidebar.css'; // Import the CSS file
 
 const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null); // Track the selected item
+  const [selectedItem, setSelectedItem] = useState(null); // Initially set to null
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [isCogRotated, setIsCogRotated] = useState(false); // New state to track rotation
+  const navigate = useNavigate(); // hook to navigate in react-router
 
   const menuItems = [
     { name: 'Home', icon: HomeIcon, path: '/' },
-    { name: 'News', icon: DocumentTextIcon, path: '/news' }, // Set path for News
+    { name: 'News', icon: DocumentTextIcon, path: '/news' },
     { name: 'Movies', icon: FilmIcon, path: '/movies' },
     { name: 'Favorites', icon: VideoCameraIcon, path: '/favorites' },
     { name: 'Chat', icon: TvIcon, path: '/chat' },
   ];
+
+  // Load the selected item from localStorage when the component mounts
+  useEffect(() => {
+    const storedSelectedItem = localStorage.getItem('selectedItem');
+    if (storedSelectedItem !== null) {
+      setSelectedItem(Number(storedSelectedItem)); // Set the selected item to the stored value
+    } else {
+      setSelectedItem(0); // Default to Home if nothing is stored
+    }
+  }, []);
+
+  // Save the selected item to localStorage whenever it changes
+  useEffect(() => {
+    if (selectedItem !== null) {
+      localStorage.setItem('selectedItem', selectedItem); // Save to localStorage
+    }
+  }, [selectedItem]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleDarkMode = () => setDarkMode(!darkMode);
@@ -25,9 +43,12 @@ const Sidebar = () => {
 
   const handleItemClick = (index) => {
     setSelectedItem(index); // Set the clicked item as selected
-    setTimeout(() => {
-      setSelectedItem(index);
-    }, 450); // 450ms delay for selection effect
+  };
+
+  // Create a separate handleClick function for both icon and text click
+  const handleClick = (index, path) => {
+    handleItemClick(index); // Handle item click (selection)
+    navigate(path); // Redirect to the desired path
   };
 
   return (
@@ -44,12 +65,33 @@ const Sidebar = () => {
           {menuItems.map((item, index) => (
             <li
               key={index}
-              onClick={() => handleItemClick(index)} // Add click handler
               className={selectedItem === index ? 'selected' : ''} // Conditional selected class
             >
-              <item.icon className="icon" />
-              <div className={`text ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}>
-                <Link to={item.path}>{item.name}</Link> {/* Use Link for navigation */}
+              {/* Icon click handler */}
+              <div 
+                className="icon-wrapper"
+                onClick={() => handleClick(index, item.path)} // Handle click for icon
+              >
+                <item.icon className="icon" />
+              </div>
+
+              {/* Text click handler */}
+              <div className="text-wrapper">
+                <Link
+                  to={item.path} // Use Link for routing
+                  className={`link ${isSidebarOpen ? 'opacity-100' : 'opacity-0'}`}
+                  style={{
+                    visibility: isSidebarOpen ? 'visible' : 'hidden',
+                    width: isSidebarOpen ? 'auto' : '0',
+                    padding: isSidebarOpen ? '0.5rem' : '0', // Adjust the padding to make sure the link remains clickable
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault(); // Prevent default Link behavior to use custom handler
+                    handleClick(index, item.path); // Call custom click handler
+                  }}
+                >
+                  {item.name}
+                </Link>
               </div>
             </li>
           ))}

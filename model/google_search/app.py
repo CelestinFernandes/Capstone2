@@ -99,6 +99,22 @@ def fetch_google_trends(keyword: str):
         "interest_by_region": interest_by_region
     }
 
+import json
+from fastapi import FastAPI, HTTPException
+from pathlib import Path
+@app.get("/fetch_data_test")
+async def fetch_data():
+    current_dir = Path(__file__).resolve().parent  # This gets the directory of app.py
+    json_file_path = current_dir / 'results.json'
+    try:
+        with open(json_file_path, 'r') as f:
+            data = json.load(f)  # Parse the JSON data
+        return data  # Return the parsed JSON as the response
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=500, detail="Error parsing JSON file")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # FastAPI endpoint for data
 @app.get("/fetch_data")
 async def fetch_data(

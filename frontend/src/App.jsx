@@ -64,11 +64,12 @@ const App = () => {
 
       {/* Main content area */}
       <div
-        className={`flex-1 flex flex-col overflow-y-auto transition-all duration-300 ease-in-out ${
-          sidebarExpanded ? 'ml-64' : 'ml-16'
-        }`}
+        className={`flex-1 flex flex-col overflow-y-auto transition-all duration-300 ease-in-out`}
+        style={{
+          marginLeft: '5vw', // Apply a 5vw margin to the content area from the left
+        }}
       >
-        <div className="flex flex-col p-6">
+        <div className="flex flex-col p-6 flex-grow">
           <Routes>
             {/* Default home page route */}
             <Route path="/" element={
