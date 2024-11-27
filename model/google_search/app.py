@@ -1,5 +1,4 @@
 import os
-import requests  # Importing requests to interact with the Groc Cloud API
 from fastapi import FastAPI, Query, HTTPException
 from serpapi import GoogleSearch
 from dotenv import load_dotenv
@@ -30,7 +29,7 @@ def fetch_google_news(keyword: str):
     }
     search = GoogleSearch(params)
     results = search.get_dict()
-    return results.get("news_results", []) 
+    return results.get("news_results", [])
 
 # Function to summarize news content using Groc Cloud API
 def summarize_with_groc(news_articles):
@@ -72,22 +71,33 @@ def fetch_google_search(keyword: str):
         "discussions": discussions
     }
 
-# Function to fetch Google Trends data
-def fetch_google_trends(keyword: str):
+# Function to fetch Google Trends interest over time data (TIMESERIES)
+def fetch_google_trends_interest_over_time(keyword: str):
     params = {
         "api_key": SERP_API_KEY,
         "q": keyword,
         "engine": "google_trends",
+        "data_type": "TIMESERIES",  # Setting the correct data type for timeseries
         "include_low_search_volume": "true"
     }
     search = GoogleSearch(params)
     results = search.get_dict()
     interest_over_time = results.get("interest_over_time", [])
-    interest_by_region = results.get("interest_by_region", [])
-    return {
-        "interest_over_time": interest_over_time,
-        "interest_by_region": interest_by_region
+    return interest_over_time
+
+# Function to fetch Google Trends interest by region data (GEO_MAP)
+def fetch_google_trends_interest_by_region(keyword: str):
+    params = {
+        "api_key": SERP_API_KEY,
+        "q": keyword,
+        "engine": "google_trends",
+        "data_type": "GEO_MAP_0",  # Data type for interest by region
+        "include_low_search_volume": "true"
     }
+    search = GoogleSearch(params)
+    results = search.get_dict()
+    compared_breakdown_by_region = results.get("interest_by_region", [])
+    return compared_breakdown_by_region
 
 # FastAPI endpoint for data
 @app.get("/fetch_data")
@@ -98,7 +108,8 @@ async def fetch_data(
     news_results = fetch_google_news(keyword)
     summarized_news = summarize_with_groc(news_results)
     search_results = fetch_google_search(keyword)
-    trends_data = fetch_google_trends(keyword)
+    interest_over_time = fetch_google_trends_interest_over_time(keyword)  # Interest over time data
+    interest_by_region = fetch_google_trends_interest_by_region(keyword)  # Interest by region data
 
     # Construct response with separate news and summarized news
     response = {
@@ -106,6 +117,9 @@ async def fetch_data(
         "news": news_results,  # Raw news data
         "summarized_news": summarized_news,  # Summarized news data
         "search": search_results,
-        "trends": trends_data
+        "trends": {
+            "interest_over_time": interest_over_time,  # Interest over time data
+            "interest_by_region": interest_by_region  # Interest by region data
+        }
     }
     return response
