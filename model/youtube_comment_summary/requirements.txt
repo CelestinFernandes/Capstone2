@@ -1,7 +1,0 @@
-fastapi
-uvicorn
-requests
-google-api-python-client
-pydantic
-groq
-python-dotenv
