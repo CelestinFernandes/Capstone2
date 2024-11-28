@@ -29,6 +29,8 @@
 import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'; // Import Routes and Route, no need for Router
 import Sidebar from './components/Sidebar'; // Import Sidebar
+import SearchPage from './pages/SearchPage'; // Import SearchPage component
+import AnalyticsPage from './pages/AnalyticsPage'; // Import AnalyticsPage component
 import MovieGrid from './components/MovieGrid'; // Import MovieGrid
 import News from './pages/News'; // Import the News page component
 
@@ -83,6 +85,8 @@ const App = () => {
 
             {/* News page route */}
             <Route path="/news" element={<News />} />
+            <Route path="/SearchPage" element={<SearchPage />} />
+            <Route path="/AnalyticsPage" element={<AnalyticsPage />} />
           </Routes>
         </div>
       </div>

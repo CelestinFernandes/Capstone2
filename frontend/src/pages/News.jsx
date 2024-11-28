@@ -37,6 +37,7 @@ const News = () => {
       }
 
       const jsonData = await response.json();
+      console.log(jsonData)
       setData(jsonData); // Set the fetched data to state
       setOriginalData(jsonData); // Store the original data for "Back to Articles"
       setSummarizedData(jsonData.summarized_news); // Store summarized news data from the API response
@@ -124,7 +125,7 @@ const News = () => {
           {/* Header Section */}
           <header className="mb-12">
             <h1 className="text-4xl font-semibold text-center text-gray-800 mb-4">
-              News, Search & Trends Dashboard for <span className="text-indigo-600">{keyword || 'Unknown'}</span>
+              News, Search & Trends Dashboard for <span className="text-indigo-600">{keyword || '--'}</span>
             </h1>
             <p className="text-lg text-center text-gray-600">Explore the latest news, search results, and trending topics for your keyword.</p>
 
